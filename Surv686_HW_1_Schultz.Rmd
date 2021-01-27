@@ -1,0 +1,118 @@
+---
+title: "Surv. 686 - Assignment 1"
+author: "Robert Schultz"
+date: "1/23/2021"
+output:
+  word_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(dplyr)
+library(lubridate)
+```
+
+#1. The following data from NCHS show the number of suicides by month in 1970.
+
+# There is some concern that there might be some seasonality among suicides. That is, suicide might be more prevalent at certain times of the year.
+
+#1. a) [5 points] Graph the data by month.
+```{r}
+# For plotting ease w/in R to not mess too much with date type coding. Just made every month equal to 01-Month-2020
+X685_HW1 %>%
+ggplot(aes(x = Month, y = Suicides)) +
+      geom_col(color = "blue") +
+      labs(title = "Suicides by Month",
+           y = "Suicide Count",
+           x = "Month") + theme_classic(base_size = 15)
+```
+
+#1. b) [5 points] Calculate the maximum likelihood estimate of p.
+```{r}
+Suicides <-c(1867, 1789, 1944, 2094, 2097, 1981, 1887, 2024, 1928, 2032, 1978, 1859)
+
+X685_HW1$p <- vector("double", nrow(X685_HW1))
+for(i in seq_along(X685_HW1$p)) {
+  X685_HW1$p[[i]] <- X685_HW1$Suicides[[i]]/sum(X685_HW1$Suicides)
+}
+  
+print(X685_HW1$p)
+```
+
+#1. c) [5 points] Write the null hypothesis that there is no seasonality. Also, write the alternative hypothesis (i.e., that there is seasonality among suicides).
+```{r}
+# Null hypothesis - H0 :(p1 = p2 = p3 = p4 = p5 = p6 = p7 = p8 = p9 = p10 = p11 = p12)
+# Alternative hypothesis - HA :($p1 \neq p2$ \neg p3$ \neg p4$ \neg p5$ \neg p6$ \neg p7$ \neg p8$ \neg p9$ \neg p10$ \neg p11$ \neg p12$)
+```
+
+#1. d) [15 points] Compute the X2 and G2 statistics. What do these tell us?
+```{r}
+# We can use the output values of X2 and G2 to test our Hypothesis. Our null hypothesis is that there is no seasonality of suicides by month
+
+Ei <-23480/12 #expected value
+print(Ei)
+X_2.1 <-sum((suicides-Ei)^2/Ei)
+G_2.1 <-sum(2*suicides*log(suicides/Ei))
+pchisq(X_2,11, lower.tail = FALSE)
+
+print(X_2.1)
+print(G_2.1)
+```
+
+#2. A hospital observes the following counts of the number of babies born on each day of the week over a certain period of time.
+
+#2. a) [5 points] Graph the proportions of all the babies born on each day of the week.
+```{r}
+par(mar=c(5,8,4,2))
+x<- barplot(HW686$Proportion, names.arg = HW686$Day, xlab = "Day of Week",ylab = "Proportion", horiz = FALSE,ylim = c(.00, .20), xpd = FALSE, main = "Proportion of Births by Day")
+```
+
+#2. b) [10 points] Calculate the maximum likelihood estimate of p, as well as the maximum likelihood estimate.
+```{r}
+Births <-c(47, 66, 73, 71, 69, 60, 49)
+
+HW686$p <- vector("double", nrow(HW686))
+for(i in seq_along(HW686$p)) {
+  HW686$p[[i]] <- HW686$Births[[i]]/sum(HW686$Births)
+}
+  
+print(HW686$p)
+```
+```{r}
+vhatphat <- (1/435)*as.matrix((diag(HW686$Proportion))-(HW686$Proportion%*%(t(HW686$Proportion))))
+```
+
+#2. c) [15 points] Calculate the maximum likelihood estimate of the proportion of babies born on the weekend (Saturday and Sunday, p1+p7) and the maximum likelihood estimate of the variance of the proportion born on the weekend.
+```{r}
+Weekend <- HW686$Births[1]+HW686$Births[7]/sum(HW686$Births)
+print(Weekend)
+
+WeekendVar <- vhatphat[1,1]+vhatphat[7,7]+(2*vhatphat[1,7])
+print(WeekendVar)
+```
+
+#2. d) [15 Points] Test the hypothesis that H0 :(p1 = p2 = p3 = p4 = p5 = p6 = p7) versus HA :(p1 ≠ p2 ≠ p3 ≠ p4 ≠ p5 ≠ p6 ≠ p7) by computing both the X2 and G2 statistics. What do you conclude?
+```{r}
+Births <-c(47, 66, 73, 71, 69, 60, 49)
+
+Ei <-435/7 #Expected Value
+print(Ei)
+X_2 <-sum((Births-Ei)^2/Ei)
+G_2 <-sum(2*Births*log(Births/Ei))
+
+pchisq(X_2,6, lower.tail = FALSE)
+
+print(X_2)
+print(G_2)
+```
+#3. The following table is based on a study of aspirin use and myocardial infarction. The data are similar to actual data.
+
+#3. a) [5 points] About 12.7% (n11+n21)/(n11+n21+n12+22) had myocardial infarction. Since this was a designed experiment, 50% were assigned to take a placebo. If the use of aspirin or placebo was independent of risk of myocardial infarction (i.e. if the risk of myocardial infarction was no different whether you took placebo or aspirin), what would the expected counts be in each cell (n11, n12, n21, and n22)?
+```{r}
+See Excel 
+```
+
+                          
+
